@@ -16,4 +16,4 @@ class NotesModel {
   }
 }
 
-module.exports = { NotesModel }
+module.exports = { NotesModel };
