@@ -31,20 +31,23 @@
       var NotesView2 = class {
         constructor(model2) {
           this.model = model2;
-          this.body = document.querySelector("body");
-        }
-        displayTitle(string) {
-          const heading = document.createElement("h1");
-          heading.innerText = string;
-          this.body.prepend(heading);
+          this.mainEL = document.querySelector("#main-container");
+          this.inputEl = document.querySelector("#note-input");
+          this.buttonEl = document.querySelector("#add-note");
+          this.buttonEl.addEventListener("click", () => {
+            this.model.addNote(this.inputEl.value);
+            this.inputEl.value = "";
+            this.displayNotes();
+          });
         }
         displayNotes() {
+          document.querySelectorAll(".note").forEach((e) => e.remove());
           const notes = this.model.getNotes();
           notes.forEach((note) => {
             const div = document.createElement("div");
             div.className = "note";
             div.innerText = note;
-            this.body.append(div);
+            this.mainEL.append(div);
           });
         }
       };
@@ -56,11 +59,5 @@
   var { NotesModel } = require_notesModel();
   var { NotesView } = require_notesView();
   var model = new NotesModel();
-  console.log(model.getNotes());
   var notesView = new NotesView(model);
-  notesView.displayTitle("Notes App");
-  model.addNote("note one");
-  model.addNote("note two");
-  model.getNotes();
-  notesView.displayNotes();
 })();
