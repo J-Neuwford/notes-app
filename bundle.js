@@ -4,6 +4,35 @@
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
+  // notesClient.js
+  var require_notesClient = __commonJS({
+    "notesClient.js"(exports, module) {
+      var NotesClient2 = class {
+        constructor() {
+        }
+        loadNotes(callback) {
+          fetch("http://localhost:3000/notes").then((response) => response.json()).then((data) => {
+            callback(data);
+          });
+        }
+        createNote(data) {
+          fetch("http://localhost:3000/notes", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json"
+            },
+            body: JSON.stringify({ "content": data })
+          }).then((response) => response.json()).then((data2) => {
+            console.log("Success:", data2);
+          }).catch((error) => {
+            console.error("Error:", error);
+          });
+        }
+      };
+      module.exports = { NotesClient: NotesClient2 };
+    }
+  });
+
   // notesModel.js
   var require_notesModel = __commonJS({
     "notesModel.js"(exports, module) {
@@ -20,6 +49,9 @@
         reset() {
           this.notes = [];
         }
+        setNotes(notes) {
+          this.notes = notes;
+        }
       };
       module.exports = { NotesModel: NotesModel2 };
     }
@@ -29,13 +61,17 @@
   var require_notesView = __commonJS({
     "notesView.js"(exports, module) {
       var NotesView2 = class {
-        constructor(model2) {
+        constructor(model2, client2) {
           this.model = model2;
+          this.client = client2;
           this.mainEL = document.querySelector("#main-container");
           this.inputEl = document.querySelector("#note-input");
           this.buttonEl = document.querySelector("#add-note");
           this.buttonEl.addEventListener("click", () => {
             this.model.addNote(this.inputEl.value);
+            this.client.createNote(this.inputEl.value, () => {
+              this.displayNotesFromApi();
+            });
             this.inputEl.value = "";
             this.displayNotes();
           });
@@ -50,14 +86,24 @@
             this.mainEL.append(div);
           });
         }
+        displayNotesFromApi() {
+          this.client.loadNotes((notes) => {
+            this.model.setNotes(notes);
+            this.displayNotes();
+            console.log(notes);
+          });
+        }
       };
       module.exports = { NotesView: NotesView2 };
     }
   });
 
   // index.js
+  var { NotesClient } = require_notesClient();
   var { NotesModel } = require_notesModel();
   var { NotesView } = require_notesView();
+  var client = new NotesClient();
   var model = new NotesModel();
-  var notesView = new NotesView(model);
+  var notesView = new NotesView(model, client);
+  notesView.displayNotesFromApi();
 })();

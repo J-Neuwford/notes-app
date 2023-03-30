@@ -5,6 +5,7 @@
 const fs = require('fs');
 const { NotesView } = require('./notesView');
 const { NotesModel } = require('./notesModel');
+const { NotesClient } = require('./notesClient');
 
 describe('NotesView', () => {
 
@@ -46,7 +47,7 @@ describe('NotesView', () => {
     const view = new NotesView(model);
 
     model.addNote('test note 1');
-    model.addNote('test note 1');
+    model.addNote('test note 2');
 
     view.displayNotes();
     view.displayNotes();
@@ -54,5 +55,4 @@ describe('NotesView', () => {
     const x = document.querySelectorAll('div').length;
     expect(x).toEqual(3);
   })
-  
 });
