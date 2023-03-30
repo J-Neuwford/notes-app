@@ -7,12 +7,13 @@ class NotesView {
     this.buttonEl = document.querySelector('#add-note');
 
     this.buttonEl.addEventListener('click', () => {
-      this.model.addNote(this.inputEl.value);
+      //this.model.addNote(this.inputEl.value);
       this.client.createNote(this.inputEl.value, () => {
         this.displayNotesFromApi();
-      })
+      });
+
+        
       this.inputEl.value = "";
-      this.displayNotes();
     })
   }
   
@@ -31,11 +32,20 @@ class NotesView {
   }
 
   displayNotesFromApi() {
+
     this.client.loadNotes(notes => {
       this.model.setNotes(notes);
       this.displayNotes();
-      console.log(notes)
+    }, () => {
+      this.displayError();
     })
+  }
+
+  displayError() {
+    const div = document.createElement('div');
+    div.className = "note";
+    div.innerText = "Oops! Something went wrong";
+    this.mainEL.append(div)
   }
 }
 
