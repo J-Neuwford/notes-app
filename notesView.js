@@ -7,14 +7,13 @@ class NotesView {
     this.buttonEl = document.querySelector('#add-note');
 
     this.buttonEl.addEventListener('click', () => {
-      //this.model.addNote(this.inputEl.value);
       this.client.createNote(this.inputEl.value, () => {
         this.displayNotesFromApi();
-      });
-
-        
+      }), () => {
+        this.displayError();
+      }
       this.inputEl.value = "";
-    })
+    });
   }
   
   displayNotes() {

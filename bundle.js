@@ -17,18 +17,15 @@
             errorCallback(error);
           });
         }
-        createNote(data, errorCallback) {
+        createNote(data, callback) {
           fetch("http://localhost:3000/notes", {
             method: "POST",
             headers: {
               "Content-type": "application/json"
             },
             body: JSON.stringify({ "content": data })
-          }).then((response) => response.json()).then((data2) => {
-            console.log("Success:", data2);
-            return data2;
-          }).catch((error) => {
-            errorCallback(error);
+          }).then((response) => response.json()).then((data2) => callback(data2)).catch((error) => {
+            callback(error);
           });
         }
       };
@@ -73,7 +70,9 @@
           this.buttonEl.addEventListener("click", () => {
             this.client.createNote(this.inputEl.value, () => {
               this.displayNotesFromApi();
-            });
+            }), () => {
+              this.displayError();
+            };
             this.inputEl.value = "";
           });
         }
